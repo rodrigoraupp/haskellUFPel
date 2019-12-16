@@ -1,0 +1,138 @@
+-------------------------------------------------------------
+10/10/2019
+Implementação da Semância Big-Step
+
+Vimos como trabalhar com árvores em Haskell:
+
+--CÓDIGO HASKELL
+data Arvore = Folha Int|No Int Arvore Arvore
+    deriving(Eq, Show)
+
+arv1::Arvore 
+arv=No 3(No 4(Folha 2)(Folha 4)(Folha 3)
+
+somaArvore:: Arvore -> Int
+somaArvore(Folha n)=n
+somaArvore(No n a1 a2)= n+ somaArvore a1 + somaArvore a2
+--
+
+A função Big-Step é definida por indução (recursão) em cima da árvore sintática dos programas.
+Dessa forma, a implementa da semântica Big-Step nada mais é do que uma computação em cima da árvore sintática dos programas.
+
+            3
+           /  \
+        4       3
+      /  \     
+    2     4      
+
+-- E:= n | E+E | E*E
+data E = Num Int | Soma E E | Mult E E
+    deriving(Eq, Show)
+-- 1+3*4
+p1::=E
+p1= Soma (Num 1) (Mult (Num 3) (Num 4))
+
+--(10+20)*(4+1)
+p2:: E
+p2= Mult (Soma (Num 10) (NUm 20)) (Soma (Num 4) (Num 1)))
+
+
+-------------------------------------------------------------
+14/11/2019
+Implementação da Semântica Samll Step em Haskell
+
+--Sintaxe
+--E := n | E+E | E*E
+
+data E = Num Int | Soma E E | Mult E E
+    deriving(Eq, Show)
+
+-- 20*4 + 40*2
+ex1:: E
+ex1 = Soma(Mult (Num 20)(Num 4)) (Mult (Num 40)(Num 2))
+
+--((3+2)*(2+7)) + 29
+ex2:: E
+ex2 = Soma (Mult (Soma (Num 3)(Num 2)) (Soma (Num 2)(Num 7))) (Num 29)
+
+Lembrando a semântica Small Step da Linguagem de Expressões Aritméticas
+
+-------------------------------------------------------------
+21/11/2019
+Semântica Operacional de uma Linguagem de Programação Funcional
+
+Sintaxe
+E := n | x | b | E op E | if E then E else E |
+    E E | fun x:T -> E | let x:t = E in E
+n pertence a inteiros
+x pertence a var
+b pertence a {true, false}
+OP pertence a {+,-,*,<,>,...}
+
+T:= INT | BOOL | T -> T
+
+(λx . x+x)1
+1+1
+2
+
+(λx.λy. x+y) 1 2  --primeiro argumento no x
+(λy. 1+y) 2
+1+2
+3
+
+Exemplos
+>1
+1
+>(fun y:int = y+y)3
+6
+>let x:int = 3*3 in x+x
+18
+>(let x:int = 2+2 in 3*x) + (let y:int =2*4 in y+y)
+28
+>let x: int = (let y:int =2+2 in y*y)in x+x)
+32
+>(fun x:int -> int => x 2)(fun x:int => x+1)
+3
+>(let y:int -> int =(fun x:int = x*x)in y 3)
+9
+>(fun x:int => let y:int =x+x in y+y)
+8
+>(fun x:int => fun y:int => x+y)2 4
+6
+
+SEMÂNTICA OPERACIONAL SMALL STEP
+Sintaxe
+E := n | x | b | E op E | if E then E else E |
+    E E | fun x:T -> E | let x:t = E in E
+n pertence a inteiros
+x pertence a var
+b pertence a {true, false}
+OP pertence a {+,-,*,<,>,...}
+v := n | b | fun x:T => E
+Olhar folha de Semântica SS Funcional
+
+Exemplo
+let x:int=3+2 in x+x *-> 10
+
+let x:int=3+2 in x+x -> A -> let x:int =5 in x+x -> let 2
+5+5 soma3 -> 10
+
+A
+		soma3
+3+2 -> 5									let1
+let x: int=3+2 in x+2 -> let x: int=5 in x+x
+
+Exemplo
+(fun x:int => fun y:int => x+y)2 4 *-> 6
+
+(((fun x:int => fun y:int => x+y) 2) 4) -> A ->
+-> ((fun y:int => 2+y) 4) AP3 -> 2+4 SOMA3 -> 6
+
+A
+												AP3
+(fun x:int=> fun y:int=>x) 2 -> (fun y:int => 2+y)				AP1
+(((fun x:int => fun y:int=> x+y) 2) 4)  -> (fun y:int => 2+y) 4
+--AP1 pois a expressão de dentro ainda não foi solucionada, precisa andar um passo nela)
+
+
+--Lista de exercícios na página do professor

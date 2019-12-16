@@ -1,0 +1,154 @@
+Haskell
+
+05/09/2019
+Interpretador GHCI
+
+Em linguagens imperativas as funções são f(1,2,3)
+Em Haskell, as funções são
+f 1 2 3
+
+Funções soma
+3+2
+>5
+
+função reverse
+reverse "Rodrigo Raupp"
+>"ppuaR orgirdoR"
+
+Salvar extensão em .hs
+No interpretador, digitar
+:l exemplo.hs
+(De dentro do interpretador)
+Ao iniciar o interpretador, usar
+ghci exemplo.hs
+
+:q --para sair
+:r --reload para carregar novamente o código fonte
+:? --para lista de comandos
+
+--EXEMPLO DE CÓDIGO
+
+--      exemplo.hs
+--      comentario
+--
+idade :: Int  -- Um valor inteiro constante
+idade = 17
+maiorDeIdade :: Bool       -- Usa a definicao de
+maiorDeIdade = (idade>=18) -- idade
+quadrado :: Int -> Int   -- funcao que eleva num.
+quadrado x = x*x       -- ao quadrado
+mini :: Int -> Int -> Int --funcao que mostra
+mini a b                  --o menor entre
+	| a <= b    = a       -- dois valores
+	| otherwise = b
+
+-----------------
+O interpretador pode receber as funções e valores também
+*Main> idade
+17
+*Main> maiorDeIdade
+False
+*Main> quadrado 100
+10000
+*Main> mini 5 10
+5
+-----------------
+
+Na função
+mini :: Int -> Int -> Int
+a função recebe dois inteiros e devolde um (o último Int)
+
+--EXEMPLO DE FUNÇÃO
+maiorDeIdade :: Int -> Bool       -- Usa a definicao de
+maiorDeIdade i = i >= 18 -- idade
+
+--No terminal
+*Main> maiorDeIdade 19
+True
+*Main> maiorDeIdade 17
+False
+
+---------------
+
+--EXEMPLO DE FUNÇÃO
+tresiguais :: Int -> Int -> Int -> Bool
+tresiguais x y z = x==y && x==z
+
+--No terminal
+*Main> tresiguais 2 3 4
+False
+*Main> tresiguais 2 2 2
+True
+
+-------------------------------------------------------
+12/09/2019
+Listas
+Em listas, todos os elementos devem possuir o mesmo tipo
+>1:[2,3]
+[1,2,3]
+
+Associativo ara direita
+>(1:(2:(3:[])))
+[1,2,3]
+
+Phil Wadler
+
+--EXEMPLO DE CÓDIGO
+dobraLista:: [Int]->[Int]
+dobraLista [] = [] --caso base
+dobraLista(x:xs) = 2*x:dobraLista xs --dobraLista(x:xs) tem dois itens x que tira o primeiro e xs o resto da lista
+
+-------------------------------------------------------
+--EXEMPLO DE CÓDIGO
+data Forma = Circulo Float |Retangulo Float Float
+	deriving(Eq,Show)
+
+redondo :: Forma -> Bool
+redondo (Circulo x) = True
+redondo (Retangulo x y) = False
+
+area :: Forma -> Float
+area (Circulo r) = pi*r*r
+area (Retangulo b a) = b*a
+
+--No terminal (é necessário por parenteses para a função áárea não receber "dois argumentos")
+*Main> area (Circulo 10)
+314.15927
+
+-------------------------------------------------------
+10/10/2019
+Implementação da Semância Big-Step
+
+Vimos como trabalhar com árvores em Haskell:
+
+--CÓDIGO HASKELL
+data Arvore = Folha Int|No Int Arvore Arvore
+    deriving(Eq, Show)
+
+arv1::Arvore 
+arv=No 3(No 4(Folha 2)(Folha 4)(Folha 3)
+
+somaArvore:: Arvore -> Int
+somaArvore(Folha n)=n
+somaArvore(No n a1 a2)= n+ somaArvore a1 + somaArvore a2
+--
+
+A função Big-Step é definida por indução (recursão) em cima da árvore sintática dos programas.
+Dessa forma, a implementa da semântica Big-Step nada mais é do que uma computação em cima da árvore sintática dos programas.
+
+            3
+           /  \
+        4       3
+      /  \     
+    2     4      
+
+-- E:= n | E+E | E*E
+data E = Num Int | Soma E E | Mult E E
+    deriving(Eq, Show)
+-- 1+3*4
+p1::=E
+p1= Soma (Num 1) (Mult (Num 3) (Num 4))
+
+--(10+20)*(4+1)
+p2:: E
+p2= Mult (Soma (Num 10) (NUm 20)) (Soma (Num 4) (Num 1)))
